@@ -9,7 +9,7 @@ grid = None
 
 def __main__():
 	# accepts size >= 5
-	for i in range(5, 6):
+	for i in range(5, 30):
 		board_size = i
 		knights_tour(board_size)
 
@@ -28,6 +28,13 @@ def knights_tour(size):
 	print_tour(found, grid, size)
 	print("(took %f seconds)" % (end - start))
 
+def get_valid_moves(moves, x, y, size):
+	return [move for move in moves if is_valid_move(x + move[0], y + move[1], size)]
+
+def get_valid_moves_warnsdorff(moves, x, y, size):
+	valid_moves = [(valid_move, len(get_valid_moves(moves, x + valid_move[0], y + valid_move[1], size))) for valid_move in get_valid_moves(moves, x, y, size)]
+	sorted_moves = sorted(valid_moves, key=lambda w: w[1], reverse=False)
+	return [move[0] for move in sorted_moves]
 
 def find_tour(size, x, y, move_index):
 	global grid
@@ -40,7 +47,8 @@ def find_tour(size, x, y, move_index):
 		return True
 
 	# [ move1, move2, ...]
-	valid_moves = [move for move in moves if is_valid_move(x + move[0], y + move[1], size)]
+	# valid_moves = get_valid_moves(moves, x, y, size)
+	valid_moves = get_valid_moves_warnsdorff(moves, x, y, size)
 
 	for valid_move in valid_moves:
 		x_next = x + valid_move[0]
