@@ -1,65 +1,47 @@
-import copy
+def main():
+	solveKnightsTour(5, 0, 0)
 
-boardsize=6
-_kmoves = ((2,1), (1,2), (-1,2), (-2,1), (-2,-1), (-1,-2), (1,-2), (2,-1))
+def isValidMove(grid, x, y):
+	maxL = len(grid)-1
+	if x <= maxL or y <= maxL or grid[x][y] > -1 :
+		return False
+	return True
+
+def getValidMoves(grid, x, y, validMoves):
+		return [ (i,j) for i,j in validMoves if isValidMove(grid, x+i, y+j) ]
+
+def movesSortedbyNumNextValidMoves(grid, x, y, legalMoves):
+	nextValidMoves = [ (i,j) for i,j in getValidMoves(grid,x,y,legalMoves) ]
+	# find the number of valid moves for each of the possible valid mode from x,y
+	withNumNextValidMoves = [ (len(getValidMoves(grid,x+i,y+j,legalMoves)),i,j) for i,j in nextValidMoves]
+	# sort based on the number so that the one with smallest number of valid moves comes on the top
+	return [ (t[1],t[2]) for t in sorted(withNumNextValidMoves) ]
 
 
-def chess2index(chess, boardsize=boardsize):
-    'Convert Algebraic chess notation to internal index format'
-    chess = chess.strip().lower()
-    x = ord(chess[0]) - ord('a')
-    y = boardsize - int(chess[1:])
-    return (x, y)
+def _solveKnightsTour(grid, x, y, num, legalMoves):
+	if num == pow(len(grid),2):
+		return True
+	# for i,j in movesSortedbyNumNextValidMoves(grid,x,y,legalMoves):
+		#For testing the advantage of warnsdorff heuristics, comment the above line and uncomment the below line
+	for i,j in getValidMoves(grid,x,y,legalMoves):
+		xN,yN = x+i,y+j
+		if isValidMove(grid,xN,yN):
+			grid[xN][yN] = num
+			if _solveKnightsTour(grid, xN, yN, num+1, legalMoves):
+				return True
+			grid[xN][yN] = -2
+	return False
 
-def boardstring(board, boardsize=boardsize):
-    r = range(boardsize)
-    lines = ''
-    for y in r:
-        lines += '\n' + ','.join('%2i' % board[(x,y)] if board[(x,y)] else '  '
-                                 for x in r)
-    return lines
+def solveKnightsTour(gridSize, startX=0, startY=0):
+		legalMoves = [(2,1),(2,-1),(-2,1),(-2,-1),(1,2),(1,-2),(-1,2),(-1,-2)]
+		#Initializing the grid
+		grid = [ x[:] for x in [[-1]*gridSize]*gridSize ]
+		print(grid)
+		grid[startX][startY] = 0
+		if _solveKnightsTour(grid,startX,startY,1,legalMoves):
+			for row in grid:
+				print '  '.join(str(e) for e in row)
+		else:
+			print 'Could not solve the problem..'
 
-def knightmoves(board, P, boardsize=boardsize):
-    Px, Py = P
-    kmoves = set((Px+x, Py+y) for x,y in _kmoves)
-    kmoves = set( (x,y)
-                  for x,y in kmoves
-                  if 0 <= x < boardsize
-                     and 0 <= y < boardsize
-                     and not board[(x,y)] )
-    return kmoves
-
-def accessibility(board, P, boardsize=boardsize):
-    access = []
-    brd = copy.deepcopy(board)
-    for pos in knightmoves(board, P, boardsize=boardsize):
-        brd[pos] = -1
-        access.append( (len(knightmoves(brd, pos, boardsize=boardsize)), pos) )
-        brd[pos] = 0
-    return access
-
-def knights_tour(start, boardsize=boardsize, _debug=False):
-    board = {(x,y):0 for x in range(boardsize) for y in range(boardsize)}
-    move = 1
-    P = chess2index(start, boardsize)
-    board[P] = move
-    move += 1
-    if _debug:
-        print(boardstring(board, boardsize=boardsize))
-    while move <= len(board):
-        P = min(accessibility(board, P, boardsize))[1]
-        board[P] = move
-        move += 1
-        if _debug:
-            print(boardstring(board, boardsize=boardsize))
-            input('\n%2i next: ' % move)
-    return board
-
-if __name__ == '__main__':
-    while 1:
-        boardsize = int(input('\nboardsize: '))
-        if boardsize < 5:
-            continue
-        start = input('Start position: ')
-        board = knights_tour(start, boardsize)
-        print(boardstring(board, boardsize=boardsize))
+main()
