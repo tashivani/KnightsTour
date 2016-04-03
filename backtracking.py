@@ -9,7 +9,7 @@ grid = None
 
 def main():
 	# accepts size >= 5
-	for i in range(5, 12):
+	for i in range(5, 6):
 		board_size = i
 		knights_tour(board_size)
 
@@ -32,8 +32,10 @@ def knights_tour(size):
 def find_tour(size, x, y, move_index):
 	global grid
 	possible_moves = 8
-	x_moves = [2, 1, -1, -2, -2, -1, 1, 2]  # the 8 possible moves from any point
-	y_moves = [1, 2, 2, 1, -1, -2, -2, -1]
+	# x_moves = [2, 1, -1, -2, -2, -1,  1,  2]  # the 8 possible moves from any point
+	# y_moves = [1, 2, 2,   1, -1, -2, -2, -1]
+
+	moves = [(2,1), (1,2), (-1,2), (-2,1), (-2,-1), (-1, -2), (1, -2), (2, -1)]
 
 	# base case:
 	if move_index == size*size:
@@ -41,8 +43,8 @@ def find_tour(size, x, y, move_index):
 		return True
 
 	for i in range(possible_moves):
-		x_next = x + x_moves[i]
-		y_next = y + y_moves[i]
+		x_next = x + moves[i][0]
+		y_next = y + moves[i][1]
 		# print(grid)
 		# print("move#: %d, (x,y)=(%d,%d)" % (move_index, x, y))
 		if valid_move(x_next, y_next, size):
