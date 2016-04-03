@@ -32,10 +32,7 @@ def knights_tour(size):
 def find_tour(size, x, y, move_index):
 	global grid
 	possible_moves = 8
-	# x_moves = [2, 1, -1, -2, -2, -1,  1,  2]  # the 8 possible moves from any point
-	# y_moves = [1, 2, 2,   1, -1, -2, -2, -1]
-
-	moves = [(2,1), (1,2), (-1,2), (-2,1), (-2,-1), (-1, -2), (1, -2), (2, -1)]
+	moves = [(2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1)]
 
 	# base case:
 	if move_index == size*size:
