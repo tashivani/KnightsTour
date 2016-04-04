@@ -46,6 +46,10 @@ def find_tour(size, x, y, move_index):
 		# print("Max number of moves reached = %d" % move_index)
 		return True
 
+	origin_touchers = get_valid_moves(moves, 0, 0, size)
+	if (x, y) not in origin_touchers and -1 not in [grid[origin_toucher[0]][origin_toucher[1]] for origin_toucher in origin_touchers]:
+		return False
+
 	# [ move1, move2, ...]
 	# valid_moves = get_valid_moves(moves, x, y, size)
 	valid_moves = get_valid_moves_warnsdorff(moves, x, y, size)
